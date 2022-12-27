@@ -45,19 +45,32 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
-CREATE TABLE "Task" (
+CREATE TABLE "Term" (
     "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "completed" BOOLEAN NOT NULL,
+    "userId" TEXT NOT NULL,
+    "year" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" TEXT NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "Note" (
+CREATE TABLE "SalaryInfo" (
     "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "termId" TEXT NOT NULL,
+    "month" INTEGER NOT NULL,
+    "basicSalary" INTEGER DEFAULT 0,
+    "overtimePay" INTEGER DEFAULT 0,
+    "allowances" INTEGER DEFAULT 0,
+    "bonus" INTEGER DEFAULT 0,
+    "otherSalary" INTEGER DEFAULT 0,
+    "incomeTax" INTEGER DEFAULT 0,
+    "residentTax" INTEGER DEFAULT 0,
+    "healthInsurancePremium" INTEGER DEFAULT 0,
+    "annuityPrice" INTEGER DEFAULT 0,
+    "employmentInsurancePremium" INTEGER DEFAULT 0,
+    "federalLawPermits" INTEGER DEFAULT 0,
+    "otherDeductin" INTEGER DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL
 );
@@ -78,10 +91,16 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Task_id_key" ON "Task"("id");
+CREATE UNIQUE INDEX "Term_id_key" ON "Term"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Note_id_key" ON "Note"("id");
+CREATE UNIQUE INDEX "Term_userId_year_key" ON "Term"("userId", "year");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SalaryInfo_id_key" ON "SalaryInfo"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SalaryInfo_termId_month_key" ON "SalaryInfo"("termId", "month");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -90,4 +109,10 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Task" ADD CONSTRAINT "Task_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Term" ADD CONSTRAINT "Term_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SalaryInfo" ADD CONSTRAINT "SalaryInfo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SalaryInfo" ADD CONSTRAINT "SalaryInfo_termId_fkey" FOREIGN KEY ("termId") REFERENCES "Term"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
